@@ -1,0 +1,10 @@
+{
+  "gerentes": {
+    "logins": ["anagontijo"],
+    "senhas": ["08121997"]
+  },
+  "clientes": {
+    "logins": ["outrapessoa"],
+    "senhas": ["teste123"]
+  }
+}
