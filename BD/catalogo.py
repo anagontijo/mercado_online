@@ -1,6 +1,7 @@
 import json
 import sys
-#sys.path.insert(1, "/home/gomagontana/Área de Trabalho/UFMG/ES/Trabalho/mercado_online-master") Insira aqui o caminho para a pasta mercado_online
+import os
+sys.path.insert(1, os.path.abspath('')[:-2])
 import classes
 from PIL import Image
 import pandas as pd
@@ -59,7 +60,7 @@ class Catalogo():
             if not product["Cod"] in self.codigos:
                 self.adicionar_produto(novo=True, qtd=product["Qtd"], codigo=product["Cod"], preco=product["Preco"],nome=product["Nome"])
         self.salvar_mudancas()
-        
+
     def salvar_mudancas(self):
         catalogo = {"codigos":[],"nomes":[],"precos":[],"estoque":[]}
         for produto in self.produtos:
