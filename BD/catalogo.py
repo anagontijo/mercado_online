@@ -1,11 +1,13 @@
 import json
+import sys
+#sys.path.insert(1, "/home/gomagontana/Área de Trabalho/UFMG/ES/Trabalho/mercado_online-master") Insira aqui o caminho para a pasta mercado_online
 import classes
 from PIL import Image
 import pandas as pd
 
 class Catalogo():
     def __init__(self):
-        with open("BD/catalogo.JSON","r") as read_file:
+        with open("catalogo.JSON","r") as read_file:
             produtos_json = json.load(read_file)
         self.produtos = []
         self.codigos = produtos_json["codigos"]
@@ -44,17 +46,18 @@ class Catalogo():
             self.produtos[self.codigos.index(codigo)].mudar_preco(preco)
 
     def visualizar_imagem(self, codigo):
-        imagem = Image.open("BD/imagens/"+str(codigo)+".jpg")
+        imagem = Image.open("imagens/"+str(codigo)+".jpg")
         imagem.show()
 
     def inserir_produtos_de_csv(self, csv_path):
         """
-            O csv deve ter as colunas no formato Código | Nome | Preço | Quantidade
+            O csv deve ter as colunas com os nomes Cod | Nome | Preco | Qtd
         """
-        new_products = pd.read_csv(csv)
-        for product in new_products:
-            if not product[0] in self.codigos:
-                self.adicionar_produto(novo=True, qtd=product[3], codigo=product[0], preco=product[2],nome=product[1])
+        new_products = pd.read_csv(csv_path)
+        print(new_products)
+        for _, product in new_products.iterrows():
+            if not product["Cod"] in self.codigos:
+                self.adicionar_produto(novo=True, qtd=product["Qtd"], codigo=product["Cod"], preco=product["Preco"],nome=product["Nome"])
         self.salvar_mudancas()
         
     def salvar_mudancas(self):
@@ -65,5 +68,8 @@ class Catalogo():
             catalogo["precos"].append(produto.preco)
             catalogo["estoque"].append(produto.estoque)
 
-        with open('BD/catalogo.JSON', 'w') as write_file:
+        with open('catalogo.JSON', 'w') as write_file:
             json.dump(catalogo, write_file)
+
+cat = Catalogo()
+cat.inserir_produtos_de_csv(csv_path="catalogo.csv")
