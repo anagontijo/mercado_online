@@ -1,14 +1,14 @@
 import json
 import sys
 import os
-sys.path.insert(1, os.path.abspath('')[:-2])
-import classes
 from PIL import Image
 import pandas as pd
+sys.path.insert(1, "/".join(os.path.abspath('').split("/")[:-1]))
+import classes
 
 class Catalogo():
     def __init__(self):
-        with open("catalogo.JSON","r") as read_file:
+        with open("/".join(os.path.abspath('').split("/")[:-1])+"/BD/catalogo.JSON","r") as read_file:
             produtos_json = json.load(read_file)
         self.produtos = []
         self.codigos = produtos_json["codigos"]
@@ -71,6 +71,3 @@ class Catalogo():
 
         with open('catalogo.JSON', 'w') as write_file:
             json.dump(catalogo, write_file)
-
-cat = Catalogo()
-cat.inserir_produtos_de_csv(csv_path="catalogo.csv")
