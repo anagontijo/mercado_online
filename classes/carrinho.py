@@ -2,7 +2,7 @@ from collections import defaultdict
 
 class Carrinho():
     def __init__(self, catalogo):
-        self.itens = defaultdict(lambda: 0)
+        self.itens = defaultdict(int)
         self.preco_total = 0
         self.catalogo = catalogo
 
@@ -15,7 +15,7 @@ class Carrinho():
             self.itens[cod_produto] += qtd
             self.preco_total += self.catalogo.verifica_preco(cod_produto)*qtd
         else:
-            raise Exception("Estoque insuficiente.")
+            raise stockException("Estoque insuficiente.")
 
     def remover_produto(self, cod_produto, qtd):
         if cod_produto in self.itens.keys():
@@ -23,10 +23,10 @@ class Carrinho():
             self.itens[cod_produto] -= qtd
             self.preco_total -= self.catalogo.verifica_preco(cod_produto)*qtd
         else:
-            raise Exception("Este produto não está no carrinho.")
+            raise cartException("Este produto não está no carrinho.")
 
     def esvaziar(self):
-        self.itens = defaultdict(lambda: 0)
+        self.itens = defaultdict(int)
         self.preco_total = 0
 
     def finaliza_compra(self, save=True):
@@ -37,3 +37,9 @@ class Carrinho():
         if save:
             self.catalogo.salvar_mudancas()
         return preco
+
+class stockException(Exception):
+    pass
+
+class cartException(Exception):
+    pass
