@@ -29,9 +29,11 @@ class Carrinho():
         self.itens = defaultdict(lambda: 0)
         self.preco_total = 0
 
-    def finaliza_compra(self):
+    def finaliza_compra(self, save=True):
         for cod in self.itens.keys():
             self.catalogo.remover_produto(cod, self.itens[cod])
-
-        self.catalogo.salvar_mudancas()
-        return self.preco_total
+        preco = self.preco_total
+        self.esvaziar()
+        if save:
+            self.catalogo.salvar_mudancas()
+        return preco
