@@ -3,16 +3,20 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm,AddProductForm
 from flaskblog.models import User, Post, Product
 from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route("/")
 @app.route("/home")
 def home():
+    is_adm = False
+    if current_user.is_authenticated:
+        if current_user.username == 'admin':
+            is_adm = True
     #posts = Post.query.all()
     products = Product.query.all()
-    return render_template("home.html", products=products)
+    return render_template("home.html", products=products,is_adm = is_adm)
 
 @app.route("/about")
 def about():
@@ -53,11 +57,11 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-def save_picture(form_picture):
+def save_picture(form_picture,path):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_pics', picture_fn)
+    picture_path = os.path.join(app.root_path, path, picture_fn)
 
     output_size = (125, 125)
     i = Image.open(form_picture)
@@ -72,7 +76,7 @@ def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
         if form.picture.data:
-            picture_file = save_picture(form.picture.data)
+            picture_file = save_picture(form.picture.data,'static/profile_pics')
             current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
@@ -96,6 +100,24 @@ def new_post():
         flash('Your post has been created.', 'success')
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post', form=form, legend='New Post')
+
+##==============================================
+## Adiciona um novo produto ao bd via formulário
+##==============================================
+@app.route("/add_new_product", methods=['GET', 'POST'])
+@login_required
+def add_new_product():
+    if current_user.username != 'admin':
+        abort(403)
+    form = AddProductForm()
+    if form.validate_on_submit():
+        picture_file = save_picture(form.image_file.data,'static/product_pics')
+        product = Product(name=form.name.data, price=form.price.data, stock = form.stock.data, image_file = picture_file)
+        db.session.add(product)
+        db.session.commit()
+        flash('Your product has been added.', 'success')
+        return redirect(url_for('home'))
+    return render_template('add_product.html', title='Add Product', form=form, legend='Add Product')
 
 @app.route("/post/<int:post_id>")
 def post(post_id):
