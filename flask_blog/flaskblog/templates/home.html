@@ -3,12 +3,14 @@
         <div class="container">
           <h2>Produtos</h2>
           <div class="row">
+              {% for product in products %}
             <div class="col-md-4">
-              <img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + '1.jpg') }}">
+              <img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}">
               <div class="caption">
-                <p>Produto 1</p>
+                <p>{{ product.name }}</p>
               </div>
             </div>
+              {% endfor %}
           </div>
         </div>
         <!--

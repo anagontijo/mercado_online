@@ -26,3 +26,12 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60), unique=True, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    image_file = db.Column(db.String(60), nullable=False)
+
+    def __repr__(self):
+        return f"Product('{self.name}', '{self.price}')"
