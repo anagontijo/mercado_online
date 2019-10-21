@@ -59,5 +59,5 @@ class AddProductForm(FlaskForm):
     submit = SubmitField('Add')
     
 class AddToCartForm(FlaskForm):
-    quantity = IntegerField('Quantidade:', validators=[DataRequired()])
+    quantity = IntegerField('Quantidade', validators=[DataRequired()])
     submit = SubmitField('Adiciona ao Carrinho')

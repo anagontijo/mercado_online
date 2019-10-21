@@ -132,6 +132,8 @@ def product(product_id):
     if form.validate_on_submit():
         flash('O produto foi adicionado ao carrinho.', 'success')
         return redirect(url_for('home'))
+    else:
+        print('form errado')
     return render_template('product.html', title=product.name, form=form, product=product)
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
