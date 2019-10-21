@@ -7,6 +7,7 @@ from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, Post
 from flaskblog.models import User, Post, Product
 from flask_login import login_user, current_user, logout_user, login_required
 
+# Rota para a página home do sistema
 @app.route("/")
 @app.route("/home")
 def home():
@@ -18,10 +19,12 @@ def home():
     products = Product.query.all()
     return render_template("home.html", products=products, is_adm = is_adm)
 
+# Rota para a página about do sistema
 @app.route("/about")
 def about():
     return render_template("about.html", title='About')
 
+# Rota para o registro de novo usuário
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
@@ -36,6 +39,7 @@ def register():
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
 
+# Rota para o login do usuário
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
@@ -52,11 +56,13 @@ def login():
 
     return render_template('login.html', title='Login', form=form)
 
+# Rota para logout
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('home'))
 
+# Função para salvar foto carregada
 def save_picture(form_picture,path):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
@@ -70,6 +76,7 @@ def save_picture(form_picture,path):
 
     return picture_fn
 
+# Rota para a visualização da conta do usuário
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
@@ -89,6 +96,7 @@ def account():
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account', image_file=image_file, form=form)
 
+# Rota para criação de novo post
 @app.route("/post/new", methods=['GET', 'POST'])
 @login_required
 def new_post():
@@ -119,11 +127,13 @@ def add_new_product():
         return redirect(url_for('home'))
     return render_template('add_product.html', title='Add Product', form=form, legend='Add Product')
 
+# Rota da página de cada post
 @app.route("/post/<int:post_id>")
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
 
+# Rota da página de cada produto
 @app.route("/product/<int:product_id>", methods=['GET', 'POST'])
 @login_required
 def product(product_id):
@@ -136,6 +146,13 @@ def product(product_id):
         print('form errado')
     return render_template('product.html', title=product.name, form=form, product=product)
 
+# Rota de pagamento da compra
+@app.route("/payment", methods=['GET', 'POST'])
+@login_required
+def payment():
+    return render_template('payment.html', title='Pagamento')
+
+# Rota de update de post de usuário
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
 def update_post(post_id):
@@ -154,6 +171,7 @@ def update_post(post_id):
         form.content.data = post.content
     return render_template('create_post.html', title='Update Post', form=form, legend='Update Post')
 
+# Rota de delete de post de usuário
 @app.route("/post/<int:post_id>/delete", methods=['POST'])
 @login_required
 def delete_post(post_id):
