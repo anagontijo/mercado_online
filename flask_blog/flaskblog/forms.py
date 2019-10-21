@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField,ValidationError,DecimalField,IntegerField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, ValidationError, DecimalField, IntegerField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from flaskblog.models import User
 
@@ -52,9 +52,12 @@ class PostForm(FlaskForm):
     submit = SubmitField('Post')
 
 class AddProductForm(FlaskForm):
-    name = StringField('Name',validators=[DataRequired()])
-    price = DecimalField("Price",validators=[DataRequired()])
-    stock = IntegerField('Stock',validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    price = DecimalField("Price", validators=[DataRequired()])
+    stock = IntegerField('Stock', validators=[DataRequired()])
     image_file = FileField('Product Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Add')
     
+class AddToCartForm(FlaskForm):
+    quantity = IntegerField('Quantidade:', validators=[DataRequired()])
+    submit = SubmitField('Adiciona ao Carrinho')

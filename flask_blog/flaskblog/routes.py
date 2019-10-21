@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm,AddProductForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm
 from flaskblog.models import User, Post, Product
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -16,7 +16,7 @@ def home():
             is_adm = True
     #posts = Post.query.all()
     products = Product.query.all()
-    return render_template("home.html", products=products,is_adm = is_adm)
+    return render_template("home.html", products=products, is_adm = is_adm)
 
 @app.route("/about")
 def about():
@@ -123,6 +123,16 @@ def add_new_product():
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     return render_template('post.html', title=post.title, post=post)
+
+@app.route("/product/<int:product_id>", methods=['GET', 'POST'])
+@login_required
+def product(product_id):
+    form = AddToCartForm()
+    product = Product.query.get_or_404(product_id)
+    if form.validate_on_submit():
+        flash('O produto foi adicionado ao carrinho.', 'success')
+        return redirect(url_for('home'))
+    return render_template('product.html', title=product.name, form=form, product=product)
 
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
 @login_required
