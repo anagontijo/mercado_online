@@ -54,10 +54,11 @@ class PostForm(FlaskForm):
 class AddProductForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired()])
     price = DecimalField("Price", validators=[DataRequired()])
+    description = StringField('Description', validators=[])
     stock = IntegerField('Stock', validators=[DataRequired()])
     image_file = FileField('Product Picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Add')
     
 class AddToCartForm(FlaskForm):
     quantity = IntegerField('Quantidade', validators=[DataRequired()])
-    submit = SubmitField('Adiciona ao Carrinho')
+    submit = SubmitField('Adicionar ao Carrinho')

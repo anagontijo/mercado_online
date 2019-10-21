@@ -112,7 +112,7 @@ def add_new_product():
     form = AddProductForm()
     if form.validate_on_submit():
         picture_file = save_picture(form.image_file.data,'static/product_pics')
-        product = Product(name=form.name.data, price=form.price.data, stock = form.stock.data, image_file = picture_file)
+        product = Product(name=form.name.data, price=form.price.data, description=form.description.data, stock = form.stock.data, image_file = picture_file)
         db.session.add(product)
         db.session.commit()
         flash('Your product has been added.', 'success')

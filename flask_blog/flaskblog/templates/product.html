@@ -1,10 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="content-section">
+    <img src="{{ url_for('static', filename='product_pics/' + product.image_file) }}">
+    <h2>{{ product.name }}</h2>
+    <p>R${{ product.price }}</p>
+    <p>{{ product.description }}</p>
     <form method="POST" action="" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Add Product</legend>
             <div class="form-group">
                 {{ form.quantity.label(class="form-control-label") }}
                 {% if form.quantity.errors %}

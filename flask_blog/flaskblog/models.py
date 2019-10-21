@@ -33,7 +33,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     stock = db.Column(db.Integer,nullable=False)
     image_file = db.Column(db.String(60), nullable=False)
-    description = db.Column(db.String(200), nullable=False, default = 'Descrição do produto.')
+    description = db.Column(db.Text, nullable=False, default = 'Descrição do produto.')
 
     def __repr__(self):
         return f"Product('{self.name}', '{self.price}', {self.stock})"
