@@ -61,4 +61,7 @@ class AddProductForm(FlaskForm):
 
 class AddToCartForm(FlaskForm):
     quantity = IntegerField('Quantidade', validators=[DataRequired(), NumberRange(min=0,max=100,message="Quantidade inválida.")])
-    submit = SubmitField('Adicionar ao Carrinho')
+    submit = SubmitField('Adicionar ao carrinho')
+
+class RemoveFromCartForm(FlaskForm):
+    submit = SubmitField('Remover')
