@@ -1,29 +1,18 @@
 from collections import defaultdict
 
 class Carrinho():
-    def __init__(self, catalogo):
+    def __init__(self):
         self.itens = defaultdict(int)
         self.preco_total = 0
-        self.catalogo = catalogo
 
-    def adicionar_produto(self, cod_produto, qtd):
-        if cod_produto in self.itens.keys():
-            total = qtd + self.itens[cod_produto]
-        else:
-            total = qtd
-        if self.catalogo.verifica_estoque(cod_produto) - total >= 0:
-            self.itens[cod_produto] += qtd
-            self.preco_total += self.catalogo.verifica_preco(cod_produto)*qtd
-        else:
-            raise stockException("Estoque insuficiente.")
+    def adicionar_produto(self, id, qtd, price):
+        self.itens[id] += qtd
+        self.preco_total += qtd*price
 
-    def remover_produto(self, cod_produto, qtd):
-        if cod_produto in self.itens.keys():
-            qtd = min(qtd,self.itens[cod_produto])
-            self.itens[cod_produto] -= qtd
-            self.preco_total -= self.catalogo.verifica_preco(cod_produto)*qtd
-        else:
-            raise cartException("Este produto não está no carrinho.")
+    def remover_produto(self, id, price):
+        qtd = self.itens[id]
+        self.preco_total -= qtd * price
+        self.itens.pop(id)
 
     def esvaziar(self):
         self.itens = defaultdict(int)
