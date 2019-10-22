@@ -3,9 +3,15 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm
 from flaskblog.models import User, Post, Product
 from flask_login import login_user, current_user, logout_user, login_required
+import sys
+import os
+sys.path.insert(1, "/".join(os.path.abspath('').split("/")[:-1]))
+from classes import Carrinho
+
+actual_shopcart = Carrinho()
 
 # Rota para a página home do sistema
 @app.route("/")
@@ -141,10 +147,28 @@ def product(product_id):
     product = Product.query.get_or_404(product_id)
     if form.validate_on_submit():
         flash('O produto foi adicionado ao carrinho.', 'success')
+        print(form.quantity.data)
+        actual_shopcart.adicionar_produto(product.id, form.quantity.data, product.price)
         return redirect(url_for('home'))
     else:
         print('form errado')
     return render_template('product.html', title=product.name, form=form, product=product)
+
+@app.route("/shopcart", methods=['GET', 'POST'])
+def shopcart():
+    shopcart_products = []
+    form = RemoveFromCartForm()
+    for item in list(actual_shopcart.itens.keys()):
+        shopcart_products.append(Product.query.get_or_404(item))
+    full_price = "{:.2f}".format(actual_shopcart.preco_total)
+
+    if form.validate_on_submit:
+        if forms[id].validate_on_submit():
+            print("aqui")
+            shopcart.remover_produto(id=id,price=Product.query.get_or_404(id).price)
+            return redirect(url_for('shopcart'))
+
+    return render_template('shopcart.html', title="Carrinho", form= form, shopcart=actual_shopcart, products=shopcart_products, full_price=full_price)
 
 # Rota de pagamento da compra
 @app.route("/payment", methods=['GET', 'POST'])
