@@ -162,12 +162,6 @@ def shopcart():
         shopcart_products.append(Product.query.get_or_404(item))
     full_price = "{:.2f}".format(actual_shopcart.preco_total)
 
-    if form.validate_on_submit:
-        if forms[id].validate_on_submit():
-            print("aqui")
-            shopcart.remover_produto(id=id,price=Product.query.get_or_404(id).price)
-            return redirect(url_for('shopcart'))
-
     return render_template('shopcart.html', title="Carrinho", form= form, shopcart=actual_shopcart, products=shopcart_products, full_price=full_price)
 
 # Rota de pagamento da compra
