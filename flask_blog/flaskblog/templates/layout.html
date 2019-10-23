@@ -83,7 +83,6 @@
                         {% if current_user.is_authenticated %}
                         {% if is_adm %}
                         <a class="nav-item nav-link" href="{{ url_for('add_new_product') }}">Adicionar Produtos</a>
-                        <a class="nav-item nav-link" href="{{ url_for('shopcart') }}">Carrinho</a>
                         <!--<a class="nav-item nav-link" href="{{ url_for('new_post') }}">New Post</a>-->
                         <a class="nav-item nav-link" href="{{ url_for('account') }}">Conta</a>
                         <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
