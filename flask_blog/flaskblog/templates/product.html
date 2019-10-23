@@ -4,7 +4,7 @@
     <img src="{{ url_for('static', filename='product_pics/' + product.image_file) }}">
     <h2>{{ product.name }}</h2>
     <p>R${{ product.price }}</p>
-    <p> Estoque: {{ product.stock }}</p>
+    <p> Estoque: {{ available }}</p>
     <p>{{ product.description }}</p>
     <form method="POST" action="" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
