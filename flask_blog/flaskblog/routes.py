@@ -213,13 +213,12 @@ def payment():
         time = datetime.datetime.now()
         for item in actual_shopcart.itens.keys():
             actual_product = Product.query.get_or_404(item)
-            print(actual_product.stock)
             actual_product.stock -= actual_shopcart.itens[item]
-            print(actual_product.stock)
             db.session.commit()
 
         ready = time + datetime.timedelta(0, calculate_time(actual_shopcart.itens))
-        order = Order(email=current_user.email, price=actual_shopcart.preco_total,
+        full_price = "{:.2f}".format(actual_shopcart.preco_total)
+        order = Order(email=current_user.email, price=full_price,
                         order_time=time, order_ready=ready)
         db.session.add(order)
         actual_shopcart.esvaziar()

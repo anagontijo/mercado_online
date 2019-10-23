@@ -41,7 +41,7 @@ class Product(db.Model):
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), nullable=False)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.String(100), nullable=False)
     order_time = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
     order_ready = db.Column(db.DateTime, nullable=False, default = datetime.utcnow)
 
