@@ -4,9 +4,10 @@ from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
 from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm, PaymentForm, AddToStockForm
-from flaskblog.models import User, Post, Product
+from flaskblog.models import User, Post, Product, Order
 from flask_login import login_user, current_user, logout_user, login_required
 from classes import Carrinho
+import datetime
 
 actual_shopcart = Carrinho()
 
@@ -17,6 +18,11 @@ def is_adm():
             is_adm = True
     return is_adm
 
+def calculate_time(itens):
+    tempo = 5 * sum(list(itens.values()))
+    for item in list(itens.keys()):
+        tempo += itens[item]/12
+    return tempo
 
 # Rota para a página home do sistema
 @app.route("/")
@@ -144,14 +150,7 @@ def post(post_id):
 @app.route("/product/<int:product_id>", methods=['GET', 'POST'])
 @login_required
 def product(product_id):
-    is_adm = False
-    if current_user.is_authenticated:
-        if current_user.username == 'admin':
-            is_adm = True
-    if is_adm:
-        form = AddToStockForm()
-        product = Product.query.get_or_404(product_id)
-
+    if is_adm():
         if form.validate_on_submit():
             flash('Os produtos foram adicionados ao estoque.', 'success')
             product.stock += form.quantity.data
@@ -160,7 +159,7 @@ def product(product_id):
         else:
             print('form errado')
 
-        return render_template('product.html', title=product.name, form=form, product=product, available=product.stock)
+        return render_template('product.html', title=product.name, form=form, product=product, available=product.stock,is_adm = is_adm())
 
     else:
         form = AddToCartForm()
@@ -174,7 +173,7 @@ def product(product_id):
             print('form errado')
 
         available = product.stock - actual_shopcart.itens[product_id]
-        return render_template('product.html', title=product.name, form=form, product=product, available=available)
+        return render_template('product.html', title=product.name, form=form, product=product, available=available,is_adm = is_adm())
 
 @app.route("/shopcart", methods=['GET', 'POST'])
 def shopcart():
@@ -205,9 +204,17 @@ def payment():
 
     if form.validate_on_submit():
         flash('Seu pagamento está sendo processado.', 'success')
+        time = datetime.datetime.now()
+        ready = time + datetime.timedelta(0, calculate_time(actual_shopcart.itens))
+        order = Order(email=current_user.email, price=actual_shopcart.preco_total,
+                        order_time=time, order_ready=ready)
+        db.session.add(order)
+        actual_shopcart.esvaziar()
+        print(Order.query.all())
+        db.session.commit()
         return redirect(url_for('home'))
 
-    return render_template('payment.html', title='Pagamento', full_price=full_price, form=form)
+    return render_template('payment.html', title='Pagamento', full_price=full_price, form=form,is_adm = is_adm())
 
 # Rota de update de post de usuário
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
@@ -239,3 +246,12 @@ def delete_post(post_id):
     db.session.commit()
     flash('Your post has been deleted.', 'success')
     return redirect(url_for('home'))
+
+@app.route("/orders", methods=['GET', 'POST'])
+@login_required
+def orders():
+    if is_adm():
+        orders_list = Order.query.all()
+    else:
+        orders_list = Order.query.filter_by(email=current_user.email)
+    return render_template('orders.html', title='Pedidos', orders=orders_list, is_adm = is_adm())
