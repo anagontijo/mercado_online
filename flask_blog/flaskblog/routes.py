@@ -48,7 +48,7 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=hashed_pw)
         db.session.add(user)
         db.session.commit()
-        flash('Your account has been created! You can now log in', 'Success')
+        flash('Conta criada com sucesso! Faça login', 'Success')
         return redirect(url_for('home'))
     return render_template('register.html', title='Register', form=form)
 
@@ -102,7 +102,7 @@ def account():
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
-        flash('Your account has been updated.', 'success')
+        flash('Sua conta foi atualizada.', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username

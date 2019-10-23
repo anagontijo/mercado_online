@@ -5,7 +5,7 @@
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">
-                    Join Today
+                    Cadastre-se
                 </legend>
                 <div class="form-group">
                     {{ form.username.label(class="form-control-label") }}
@@ -19,7 +19,7 @@
                         </div>
                     {% else %}
                         {{ form.username(class="form-control form-control-lg") }}
-                    {% endif %}                    
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.email.label(class="form-control-label") }}
@@ -32,7 +32,7 @@
                         </div>
                     {% else %}
                         {{ form.email(class="form-control form-control-lg") }}
-                    {% endif %}               
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.password.label(class="form-control-label") }}
@@ -45,7 +45,7 @@
                         </div>
                     {% else %}
                         {{ form.password(class="form-control form-control-lg") }}
-                    {% endif %}               
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     {{ form.confirm_password.label(class="form-control-label") }}
@@ -58,7 +58,7 @@
                         </div>
                     {% else %}
                         {{ form.confirm_password(class="form-control form-control-lg") }}
-                    {% endif %}               
+                    {% endif %}
                 </div>
             </fieldset>
             <div class="form-group">
