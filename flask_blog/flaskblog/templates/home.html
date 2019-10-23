@@ -1,17 +1,19 @@
 {% extends "layout.html" %}
 {% block content %}
+
         {% if is_adm %}
         <div class="container">
+          
           <h2>Produtos</h2>
           <div class="row">
               {% for product in products %}
             <div class="col-md-4">
               <!--<img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}">-->
-              <a href="{{ url_for('product', product_id=product.id) }}"><img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}"></a>
+              <a href="{{ url_for('product', product_id=product.id) }}"><img  class="imagem-produto" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}"></a>
               <div class="caption">
-                <p>{{ product.name }}</p>
-                <p>R${{ product.price }}</p>
-                <p>Estoque: {{ product.stock }}</p>
+                  <p class="nome-produto">{{ product.name }}</p>
+                <p class = "legendas">R${{ product.price }}</p>
+                <p class = "legendas">Estoque: {{ product.stock }}</p>
               </div>
             </div>
               {% endfor %}
@@ -23,10 +25,10 @@
           <div class="row">
               {% for product in products %}
             <div class="col-md-4">
-              <a href="{{ url_for('product', product_id=product.id) }}"><img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}"></a>
+              <a href="{{ url_for('product', product_id=product.id) }}"><img  class="imagem-produto" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}"></a>
               <div class="caption">
-                <p>{{ product.name }}</p>
-                <p>R${{ product.price }}</p>
+                <p class="nome-produto">{{ product.name }}</p>
+                <p class = "legendas">R${{ product.price }}</p>
               </div>
             </div>
               {% endfor %}
