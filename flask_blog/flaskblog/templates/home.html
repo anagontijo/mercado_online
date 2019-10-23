@@ -1,5 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
+        {% if is_adm %}
+        <div class="container">
+          <h2>Produtos</h2>
+          <div class="row">
+              {% for product in products %}
+            <div class="col-md-4">
+              <!--<img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}">-->
+              <a href="{{ url_for('product', product_id=product.id) }}"><img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}"></a>
+              <div class="caption">
+                <p>{{ product.name }}</p>
+                <p>R${{ product.price }}</p>
+                <p>Estoque: {{ product.stock }}</p>
+              </div>
+            </div>
+              {% endfor %}
+          </div>
+        </div>
+        {% else %}
         <div class="container">
           <h2>Produtos</h2>
           <div class="row">
@@ -15,6 +33,7 @@
               {% endfor %}
           </div>
         </div>
+        {% endif %}
         <!--
         {% for post in posts %}
           <article class="media content-section">
