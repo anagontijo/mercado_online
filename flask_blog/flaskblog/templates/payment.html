@@ -3,22 +3,51 @@
     <div class="container-fluid">
         <div class="creditCardForm">
             <div class="heading">
-                <h1>Pagamento</h1>
+                <h1>Valor Total: R${{ full_price }}</h1>
             </div>
+            <form method="POST" action="">
+            <fieldset class="form-group">
             <div class="payment">
-                <form>
-                    <div class="form-group owner">
-                        <label for="owner">Nome do Titular</label>
-                        <input type="text" class="form-control" id="owner">
+                    <div class="form-group">
+                        {{ form.nome_do_titular.label(class="form-control-label") }}
+                        {% if form.nome_do_titular.errors %}
+                            {{ form.nome_do_titular(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.nome_do_titular.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.nome_do_titular(class="form-control form-control-lg") }}
+                        {% endif %}               
                     </div>
-                    <div class="form-group CVV">
-                        <label for="cvv">Código de Segurança</label>
-                        <input type="text" class="form-control" id="cvv">
+                    <div class="form-group">
+                        {{ form.numero_do_cartao.label(class="form-control-label") }}
+                        {% if form.numero_do_cartao.errors %}
+                            {{ form.numero_do_cartao(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.numero_do_cartao.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.numero_do_cartao(class="form-control form-control-lg") }}
+                        {% endif %}               
                     </div>
-                    <div class="form-group" id="card-number-field">
-                        <label for="cardNumber">Número do Cartão</label>
-                        <input type="text" class="form-control" id="cardNumber">
+                    <div class="form-group">
+                        {{ form.cvv.label(class="form-control-label") }}
+                        {% if form.cvv.errors %}
+                            {{ form.cvv(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.cvv.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.cvv(class="form-control form-control-lg") }}
+                        {% endif %}               
                     </div>
+                    </fieldset>
                     <div class="form-group" id="expiration-date">
                         <label>MM/AA</label>
                         <select>
@@ -42,15 +71,18 @@
                             <option value="19"> 2022</option>
                             <option value="20"> 2023</option>
                             <option value="21"> 2024</option>
+                            <option value="21"> 2025</option>
+                            <option value="21"> 2026</option>
                         </select>
                     </div>
                     <div class="form-group" id="credit_cards">
                         <img src="{{ url_for('static', filename='visa.jpg') }}" id="visa">
                         <img src="{{ url_for('static', filename='mastercard.jpg') }}" id="mastercard">
                     </div>
-                    <div class="form-group" id="pay-now">
-                        <button type="submit" class="btn btn-default" id="confirm-purchase">Finalizar Compra</button>
-                    </div>
+                        {{ form.hidden_tag() }}
+                        <div class="form-group">
+                                {{ form.submit(class="btn btn-outline-info") }}
+                        </div>
                 </form>
             </div>
         </div>
