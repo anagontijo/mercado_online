@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+    <table border="1">
+        <tr>
+            <td><b>Email</b></td>
+            <td><b>Preço total</b></td>
+            <td><b>Horário da compra</b></td>
+            <td><b>Horário da entrega</b></td>
+        </tr>
+    {% for order in orders %}
+            <tr>
+                <td>{{order.email}}</td>
+                <td>{{order.price}}</td>
+                <td>{{order.order_time}}</td>
+                <td>{{order.order_ready}}</td>
+            </tr>
+    {% endfor %}
+    </table>
+{% endblock content %}
