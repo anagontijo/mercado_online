@@ -65,3 +65,9 @@ class AddToCartForm(FlaskForm):
 
 class RemoveFromCartForm(FlaskForm):
     submit = SubmitField('Remover')
+
+class PaymentForm(FlaskForm):
+    nome_do_titular = StringField('Nome do Titular', validators=[DataRequired()])
+    numero_do_cartao = StringField('Número do Cartão', validators=[DataRequired()])
+    cvv = StringField('Código de Segurança', validators=[DataRequired()])
+    submit = SubmitField('Realizar Pagamento')
