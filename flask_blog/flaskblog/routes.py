@@ -13,17 +13,21 @@ from classes import Carrinho
 
 actual_shopcart = Carrinho()
 
-# Rota para a página home do sistema
-@app.route("/")
-@app.route("/home")
-def home():
+def is_adm():
     is_adm = False
     if current_user.is_authenticated:
         if current_user.username == 'admin':
             is_adm = True
+    return is_adm
+
+
+# Rota para a página home do sistema
+@app.route("/")
+@app.route("/home")
+def home():
     #posts = Post.query.all()
     products = Product.query.all()
-    return render_template("home.html", products=products, is_adm = is_adm)
+    return render_template("home.html", products=products, is_adm = is_adm())
 
 # Rota para a página about do sistema
 @app.route("/about")
@@ -100,7 +104,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account', image_file=image_file, form=form)
+    return render_template('account.html', title='Account', image_file=image_file, form=form,is_adm = is_adm())
 
 # Rota para criação de novo post
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -115,9 +119,8 @@ def new_post():
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post', form=form, legend='New Post')
 
-##==============================================
-## Adiciona um novo produto ao bd via formulário
-##==============================================
+
+# Adiciona um novo produto ao bd via formulário
 @app.route("/add_new_product", methods=['GET', 'POST'])
 @login_required
 def add_new_product():
@@ -131,7 +134,7 @@ def add_new_product():
         db.session.commit()
         flash('Your product has been added.', 'success')
         return redirect(url_for('home'))
-    return render_template('add_product.html', title='Add Product', form=form, legend='Add Product')
+    return render_template('add_product.html', title='Add Product', form=form, legend='Add Product',is_adm = is_adm())
 
 # Rota da página de cada post
 @app.route("/post/<int:post_id>")
@@ -152,7 +155,7 @@ def product(product_id):
         return redirect(url_for('home'))
     else:
         print('form errado')
-    return render_template('product.html', title=product.name, form=form, product=product)
+    return render_template('product.html', title=product.name, form=form, product=product,is_adm = is_adm())
 
 @app.route("/shopcart", methods=['GET', 'POST'])
 def shopcart():
@@ -162,13 +165,13 @@ def shopcart():
         shopcart_products.append(Product.query.get_or_404(item))
     full_price = "{:.2f}".format(actual_shopcart.preco_total)
 
-    return render_template('shopcart.html', title="Carrinho", form= form, shopcart=actual_shopcart, products=shopcart_products, full_price=full_price)
+    return render_template('shopcart.html', title="Carrinho", form= form, shopcart=actual_shopcart, products=shopcart_products, full_price=full_price,is_adm = is_adm())
 
 # Rota de pagamento da compra
 @app.route("/payment", methods=['GET', 'POST'])
 @login_required
 def payment():
-    return render_template('payment.html', title='Pagamento')
+    return render_template('payment.html', title='Pagamento',is_adm = is_adm())
 
 # Rota de update de post de usuário
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
