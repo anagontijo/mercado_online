@@ -208,7 +208,7 @@ def payment():
         time = datetime.datetime.now()
         for item in actual_shopcart.itens.keys():
             actual_product = Product.query.get_or_404(item)
-            actual_product.stock -= actual_shopcart[item]
+            actual_product.stock -= actual_shopcart.itens[item]
             db.session.commit()
 
         ready = time + datetime.timedelta(0, calculate_time(actual_shopcart.itens))
