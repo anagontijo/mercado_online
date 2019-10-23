@@ -10,5 +10,5 @@ class Pedido():
     def calcula_tempo(self):
         tempo = 5 * sum(list(self.itens.values()))
         for item in list(self.itens.keys()):
-            tempo += 0.5 * self.itens[item]
+            tempo += self.itens[item]/12
         return tempo
