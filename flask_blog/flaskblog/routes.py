@@ -151,6 +151,7 @@ def post(post_id):
 @login_required
 def product(product_id):
     if is_adm():
+        form = AddProductForm()
         if form.validate_on_submit():
             flash('Os produtos foram adicionados ao estoque.', 'success')
             product.stock += form.quantity.data
@@ -205,12 +206,16 @@ def payment():
     if form.validate_on_submit():
         flash('Seu pagamento está sendo processado.', 'success')
         time = datetime.datetime.now()
+        for item in actual_shopcart.itens.keys():
+            actual_product = Product.query.get_or_404(item)
+            actual_product.stock -= actual_shopcart.itens[item]
+            db.session.commit()
+
         ready = time + datetime.timedelta(0, calculate_time(actual_shopcart.itens))
         order = Order(email=current_user.email, price=actual_shopcart.preco_total,
                         order_time=time, order_ready=ready)
         db.session.add(order)
         actual_shopcart.esvaziar()
-        print(Order.query.all())
         db.session.commit()
         return redirect(url_for('home'))
 
