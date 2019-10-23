@@ -70,6 +70,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
+    actual_shopcart.esvaziar()
     return redirect(url_for('home'))
 
 # Função para salvar foto carregada
@@ -161,7 +162,8 @@ def product(product_id):
             return redirect(url_for('home'))
         else:
             print('form errado')
-        return render_template('product.html', title=product.name, form=form, product=product)
+
+        return render_template('product.html', title=product.name, form=form, product=product, available=product.stock)
 
     else:
         form = AddToCartForm()
@@ -173,7 +175,9 @@ def product(product_id):
             return redirect(url_for('home'))
         else:
             print('form errado')
-        return render_template('product.html', title=product.name, form=form, product=product)
+
+        available = product.stock - actual_shopcart.itens[product_id]
+        return render_template('product.html', title=product.name, form=form, product=product, available=available)
 
 @app.route("/shopcart", methods=['GET', 'POST'])
 def shopcart():
