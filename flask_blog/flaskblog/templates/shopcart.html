@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="container">
+      <h2>Carrinho</h2>
+      <div class="row">
+          {% for product in products %}
+        <div class="col-md-3">
+          <!--<img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}">-->
+          <img class="img-thumbnail" src="{{ url_for('static', filename='product_pics/' + product.image_file) }}">
+          <div class="caption">
+            <p>{{ product.name }}</p>
+            <p>R${{ product.price }}</p>
+            <p>Qtd: {{shopcart.itens[product.id]}}</p>
+          </div>
+          <div class="form-group">
+              {{ form.submit(class="btn btn-outline-info") }}
+          </div>
+        </div>
+          {% endfor %}
+      </div>
+      <div>
+          <h2>Total : {{full_price}}</h2>
+      </div>
+    </div>
+{% endblock content %}
