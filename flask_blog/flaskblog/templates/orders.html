@@ -1,6 +1,30 @@
 {% extends "layout.html" %}
 {% block content %}
-    <table border="1">
+<style>
+table {
+  border: 5px solid #6295b9;
+  border-radius: 20px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  text-align: center;
+  color : black;
+  padding: 4px;
+}
+
+tr:nth-child(even){background-color: #6295b9}
+
+th {
+  background-color: #6295b9;
+  color: white;
+}
+
+
+</style>
+
+    <table class = 'table'>
         <tr>
             <td><b>Email</b></td>
             <td><b>Preço total</b></td>
