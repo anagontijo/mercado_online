@@ -168,14 +168,17 @@ def product(product_id):
         form = AddToCartForm()
         product = Product.query.get_or_404(product_id)
 
-        if form.validate_on_submit():
+        available = product.stock - actual_shopcart.itens[product_id]
+
+        if form.validate_on_submit() and form.quantity.data <= available:
             flash('O produto foi adicionado ao carrinho.', 'success')
             actual_shopcart.adicionar_produto(product.id, form.quantity.data, product.price)
             return redirect(url_for('home'))
+        elif form.validate_on_submit():
+            flash('Quantidade acima do estoque', 'warning')
         else:
             print('form errado')
 
-        available = product.stock - actual_shopcart.itens[product_id]
         return render_template('product.html', title=product.name, form=form, product=product, available=available,is_adm = is_adm())
 
 @app.route("/shopcart", methods=['GET', 'POST'])
