@@ -189,6 +189,13 @@ def shopcart():
 
     return render_template('shopcart.html', title="Carrinho", form= form, shopcart=actual_shopcart, products=shopcart_products, full_price=full_price,is_adm = is_adm())
 
+@app.route("/shopcart/remove/<int:product_id>/<float:price>", methods=['GET', 'POST'])
+def remove(product_id,price):
+    print('removing')
+    actual_shopcart.remover_produto(product_id,price)
+    return shopcart()
+
+
 # Rota de pagamento da compra
 @app.route("/payment", methods=['GET', 'POST'])
 @login_required

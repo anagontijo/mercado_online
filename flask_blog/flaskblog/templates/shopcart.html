@@ -12,8 +12,8 @@
             <p>R${{ product.price }}</p>
             <p>Qtd: {{shopcart.itens[product.id]}}</p>
           </div>
-          <div class="form-group">
-              {{ form.submit(class="btn btn-outline-info") }}
+          <div class="container" >
+              <a href="{{ url_for('remove', product_id=product.id, price=product.price) }}" class="btn btn-info" role="button">Remover</a>
           </div>
         </div>
           {% endfor %}
