@@ -37,3 +37,13 @@ class Product(db.Model):
 
     def __repr__(self):
         return f"Product('{self.name}', '{self.price}', {self.stock})"
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    order_time = db.Column(db.DateTime, nullable=False)
+    order_ready = db.Column(db.Float, nullable=False)
+
+    def __repr__(self):
+        return f"Order('{self.email}', '{self.price}', {self.order_time}, {self.order_ready})"
