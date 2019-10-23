@@ -225,7 +225,7 @@ def payment():
         db.session.commit()
         return redirect(url_for('home'))
 
-    return render_template('payment.html', title='Pagamento', full_price=full_price, form=form,is_adm = is_adm())
+    return render_template('payment.html',title='Pagamento', full_price=full_price, form=form,is_adm = is_adm())
 
 # Rota de update de post de usuário
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
@@ -263,6 +263,8 @@ def delete_post(post_id):
 def orders():
     if is_adm():
         orders_list = Order.query.all()
+        total = "{:.2f}".format(sum([float(a.price) for a in orders_list]))
     else:
         orders_list = Order.query.filter_by(email=current_user.email)
-    return render_template('orders.html', title='Pedidos', orders=orders_list, is_adm = is_adm())
+        total = 0
+    return render_template('orders.html', total=total, title='Pedidos', orders=orders_list, is_adm = is_adm())
