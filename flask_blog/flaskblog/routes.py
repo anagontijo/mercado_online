@@ -3,7 +3,7 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm, AddToStockForm
 from flaskblog.models import User, Post, Product
 from flask_login import login_user, current_user, logout_user, login_required
 import sys
@@ -143,16 +143,34 @@ def post(post_id):
 @app.route("/product/<int:product_id>", methods=['GET', 'POST'])
 @login_required
 def product(product_id):
-    form = AddToCartForm()
-    product = Product.query.get_or_404(product_id)
-    if form.validate_on_submit():
-        flash('O produto foi adicionado ao carrinho.', 'success')
-        print(form.quantity.data)
-        actual_shopcart.adicionar_produto(product.id, form.quantity.data, product.price)
-        return redirect(url_for('home'))
+    is_adm = False
+    if current_user.is_authenticated:
+        if current_user.username == 'admin':
+            is_adm = True
+    if is_adm:
+        form = AddToStockForm()
+        product = Product.query.get_or_404(product_id)
+
+        if form.validate_on_submit():
+            flash('Os produtos foram adicionados ao estoque.', 'success')
+            product.stock += form.quantity.data
+            db.session.commit()
+            return redirect(url_for('home'))
+        else:
+            print('form errado')
+        return render_template('product.html', title=product.name, form=form, product=product)
+
     else:
-        print('form errado')
-    return render_template('product.html', title=product.name, form=form, product=product)
+        form = AddToCartForm()
+        product = Product.query.get_or_404(product_id)
+
+        if form.validate_on_submit():
+            flash('O produto foi adicionado ao carrinho.', 'success')
+            actual_shopcart.adicionar_produto(product.id, form.quantity.data, product.price)
+            return redirect(url_for('home'))
+        else:
+            print('form errado')
+        return render_template('product.html', title=product.name, form=form, product=product)
 
 @app.route("/shopcart", methods=['GET', 'POST'])
 def shopcart():
