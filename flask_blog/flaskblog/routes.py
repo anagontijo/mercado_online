@@ -3,24 +3,28 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm, PaymentForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm, PaymentForm, AddToStockForm
 from flaskblog.models import User, Post, Product
 from flask_login import login_user, current_user, logout_user, login_required
 from classes import Carrinho
 
 actual_shopcart = Carrinho()
 
-# Rota para a página home do sistema
-@app.route("/")
-@app.route("/home")
-def home():
+def is_adm():
     is_adm = False
     if current_user.is_authenticated:
         if current_user.username == 'admin':
             is_adm = True
+    return is_adm
+
+
+# Rota para a página home do sistema
+@app.route("/")
+@app.route("/home")
+def home():
     #posts = Post.query.all()
     products = Product.query.all()
-    return render_template("home.html", products=products, is_adm = is_adm)
+    return render_template("home.html", products=products, is_adm = is_adm())
 
 # Rota para a página about do sistema
 @app.route("/about")
@@ -63,6 +67,7 @@ def login():
 @app.route("/logout")
 def logout():
     logout_user()
+    actual_shopcart.esvaziar()
     return redirect(url_for('home'))
 
 # Função para salvar foto carregada
@@ -97,7 +102,7 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
-    return render_template('account.html', title='Account', image_file=image_file, form=form)
+    return render_template('account.html', title='Account', image_file=image_file, form=form,is_adm = is_adm())
 
 # Rota para criação de novo post
 @app.route("/post/new", methods=['GET', 'POST'])
@@ -112,9 +117,8 @@ def new_post():
         return redirect(url_for('home'))
     return render_template('create_post.html', title='New Post', form=form, legend='New Post')
 
-##==============================================
-## Adiciona um novo produto ao bd via formulário
-##==============================================
+
+# Adiciona um novo produto ao bd via formulário
 @app.route("/add_new_product", methods=['GET', 'POST'])
 @login_required
 def add_new_product():
@@ -128,7 +132,7 @@ def add_new_product():
         db.session.commit()
         flash('Your product has been added.', 'success')
         return redirect(url_for('home'))
-    return render_template('add_product.html', title='Add Product', form=form, legend='Add Product')
+    return render_template('add_product.html', title='Add Product', form=form, legend='Add Product',is_adm = is_adm())
 
 # Rota da página de cada post
 @app.route("/post/<int:post_id>")
@@ -140,16 +144,37 @@ def post(post_id):
 @app.route("/product/<int:product_id>", methods=['GET', 'POST'])
 @login_required
 def product(product_id):
-    form = AddToCartForm()
-    product = Product.query.get_or_404(product_id)
-    if form.validate_on_submit():
-        flash('O produto foi adicionado ao carrinho.', 'success')
-        print(form.quantity.data)
-        actual_shopcart.adicionar_produto(product.id, form.quantity.data, product.price)
-        return redirect(url_for('home'))
+    is_adm = False
+    if current_user.is_authenticated:
+        if current_user.username == 'admin':
+            is_adm = True
+    if is_adm:
+        form = AddToStockForm()
+        product = Product.query.get_or_404(product_id)
+
+        if form.validate_on_submit():
+            flash('Os produtos foram adicionados ao estoque.', 'success')
+            product.stock += form.quantity.data
+            db.session.commit()
+            return redirect(url_for('home'))
+        else:
+            print('form errado')
+
+        return render_template('product.html', title=product.name, form=form, product=product, available=product.stock)
+
     else:
-        print('form errado')
-    return render_template('product.html', title=product.name, form=form, product=product)
+        form = AddToCartForm()
+        product = Product.query.get_or_404(product_id)
+
+        if form.validate_on_submit():
+            flash('O produto foi adicionado ao carrinho.', 'success')
+            actual_shopcart.adicionar_produto(product.id, form.quantity.data, product.price)
+            return redirect(url_for('home'))
+        else:
+            print('form errado')
+
+        available = product.stock - actual_shopcart.itens[product_id]
+        return render_template('product.html', title=product.name, form=form, product=product, available=available)
 
 @app.route("/shopcart", methods=['GET', 'POST'])
 def shopcart():
@@ -159,7 +184,7 @@ def shopcart():
         shopcart_products.append(Product.query.get_or_404(item))
     full_price = "{:.2f}".format(actual_shopcart.preco_total)
 
-    return render_template('shopcart.html', title="Carrinho", form= form, shopcart=actual_shopcart, products=shopcart_products, full_price=full_price)
+    return render_template('shopcart.html', title="Carrinho", form= form, shopcart=actual_shopcart, products=shopcart_products, full_price=full_price,is_adm = is_adm())
 
 # Rota de pagamento da compra
 @app.route("/payment", methods=['GET', 'POST'])
