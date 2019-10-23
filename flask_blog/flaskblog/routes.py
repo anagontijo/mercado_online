@@ -3,12 +3,9 @@ import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
 from flaskblog import app, db, bcrypt
-from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm, AddToStockForm
+from flaskblog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, AddProductForm, AddToCartForm, RemoveFromCartForm, PaymentForm, AddToStockForm
 from flaskblog.models import User, Post, Product
 from flask_login import login_user, current_user, logout_user, login_required
-import sys
-import os
-sys.path.insert(1, "/".join(os.path.abspath('').split("/")[:-1]))
 from classes import Carrinho
 
 actual_shopcart = Carrinho()
@@ -193,7 +190,17 @@ def shopcart():
 @app.route("/payment", methods=['GET', 'POST'])
 @login_required
 def payment():
-    return render_template('payment.html', title='Pagamento',is_adm = is_adm())
+    shopcart_products = []
+    form = PaymentForm()
+    for item in list(actual_shopcart.itens.keys()):
+        shopcart_products.append(Product.query.get_or_404(item))
+    full_price = "{:.2f}".format(actual_shopcart.preco_total)
+
+    if form.validate_on_submit():
+        flash('Seu pagamento está sendo processado.', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('payment.html', title='Pagamento', full_price=full_price, form=form)
 
 # Rota de update de post de usuário
 @app.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
